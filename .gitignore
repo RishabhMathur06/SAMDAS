@@ -1,3 +1,16 @@
+# Logs
+logs/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+*.pyc
+
 # Virtual Environments
 .venv
 venv
