@@ -17,3 +17,11 @@ venv
 
 # Environment Files
 .env
+
+# Databases (Immutable Ledger)
+*.db
+*.sqlite3
+*.sqlite
+
+# macOS
+.DS_Store
