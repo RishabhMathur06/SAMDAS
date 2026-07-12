@@ -45,7 +45,7 @@ class MerkleTree:
             right = hashes[i+1] if i+1 < len(hashes) else left
 
             combined = left + right
-            new_level.apend(self._hash(combined))
+            new_level.append(self._hash(combined))
 
         return self._calculate_merkle_root(new_level)
 
