@@ -33,6 +33,7 @@ class MerkleTree:
         """
         Recursively calculates the Merkle Root from a list of hashes.
         """
+        # Return when root hash is found.
         if(len(hashes)==1):
             return hashes[0]
 
@@ -41,12 +42,15 @@ class MerkleTree:
         for i in range(0, len(hashes), 2):
             left = hashes[i]
 
-            # If there's odd no. duplicate the last hash (Standard Merkle behaviour).
+            # If there's odd no. of reasoning blocks duplicate 
+            # the last hash (Standard Merkle behaviour).
             right = hashes[i+1] if i+1 < len(hashes) else left
 
             combined = left + right
             new_level.append(self._hash(combined))
 
+        # Recursively stitch together all the hashed reasoning blocks 
+        # at each level, to finally get the rot hash.
         return self._calculate_merkle_root(new_level)
 
     @staticmethod
