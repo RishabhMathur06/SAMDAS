@@ -40,38 +40,38 @@ class LedgerDatabase:
 
             conn.commit()
 
-        def save_session(self, root_hash: str, thought_hashes: List[str]):
-            """
-            Locks an entire session of thoughts into the vault.
-            """
-            with sqlite3.connect(self.db_path) as conn:
-                cursor = conn.cursor()
+    def save_session(self, root_hash: str, thought_hashes: List[str]):
+        """
+        Locks an entire session of thoughts into the vault.
+        """
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
 
-                # Save the root hash
+            # Save the root hash
+            cursor.execute(
+                "INSERT INTO root_hashes (root_hash) VALUES (?)",
+                (root_hash,)
+            )
+            root_hash_id = cursor.lastrowid
+
+            # Save all the individual thought leaves associated with
+            # that Root Hash.
+            for index, thought_hashes in enumerate(thought_hashes):
                 cursor.execute(
-                    "INSERT INTO root_hashes (root_hash) VALUES (?)",
-                    (root_hash,)
+                    """
+                    INSERT INTO thought_logs (root_hash_id, thought_hash, sequence_number) VALUES (?, ?, ?)
+                    """,
+                    (root_hash_id, thought_hashes, index)
                 )
-                root_hash_id = cursor.lastrowid
+            conn.commit()
 
-                # Save all the individual thought leaves associated with
-                # that Root Hash.
-                for index, thought_hashes in enumerate(thought_hashes):
-                    cursor.execute(
-                        """
-                        INSERT INTO thought_logs (root_hash_id, thought_hash, sequence_number) VALUES (?, ?, ?)
-                        """,
-                        (root_hash_id, thought_hashes, index)
-                    )
-                conn.commit()
+    def verify_root_exists(self, root_hash: str) -> bool:
+        """
+        The SAMDAS firewall calls this to quickly check if a Root Hash is valid and exists.
+        """
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT id FROM root_hashes WHERE root_hash = ?", (root_hash,))
+            result = cursor.fetchone()
 
-        def verify_root_exists(self, root_hash: str) -> bool:
-            """
-            The SAMDAS firewall calls this to quickly check if a Root Hash is valid and exists.
-            """
-            with sqlite3.connect(self.db_path) as conn:
-                cursor = conn.cursor()
-                cursor.execute("SELECT id FROM root_hashes WHERE root_hash = ?", (root_hash,))
-                result = cursor.fetchone()
-
-                return result is not None
+            return result is not None
