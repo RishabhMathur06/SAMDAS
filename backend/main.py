@@ -36,6 +36,7 @@ class SessionResponse(BaseModel):
 async def health_check():
     """A simple ping to check if the Firewall is online."""
     return {"status": "online", "system": "SAMDAS Firewall Active"}
+    
 @app.post("/api/v1/ledger/session", response_model=SessionResponse)
 async def secure_thought_session(session: ThoughtSession):
     """
