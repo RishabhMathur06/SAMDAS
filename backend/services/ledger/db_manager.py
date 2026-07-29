@@ -75,3 +75,15 @@ class LedgerDatabase:
             result = cursor.fetchone()
 
             return result is not None
+
+    def get_all_session(self):
+        """
+        Fetches all securely logged sessions for the Frontend Dashboard.
+        """
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+
+            # Grab the root hashes and order by newest first.
+            cursor.execute("SELECT id, root_hash, timestamp FROM root_hashes ORDER BY timestamp DESC")
+
+            return cursor.fetchall()

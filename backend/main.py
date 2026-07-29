@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
+from fastapi.middleware.cors import CORSMiddleware
 
 from backend.services.ledger.crypto_ledger import MerkleTree
 from backend.services.ledger.db_manager import LedgerDatabase
@@ -10,6 +11,13 @@ app = FastAPI(
     title="SAMDAS Control Plane API",
     description="Zero-Trust Cognitive Firewall API for Autonomous AI",
     version="1.0.0"
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # 2. Connect to our database vault.
@@ -28,6 +36,11 @@ class SessionResponse(BaseModel):
     status: str
     root_hash: str
     message: str
+
+class SessionRecord(BaseModel):
+    id: int
+    root_hash: str
+    timestamp: str
 
 # ==========================================
 # API ENDPOINTS (The Nervous System)
@@ -71,3 +84,21 @@ async def secure_thought_session(session: ThoughtSession):
         root_hash=root_hash,
         message="Session cryptographically secured and locked."
     )
+
+@app.get("/api/v1/ledger/sessions", response_model=List[SessionRecord])
+async def get_all_sessions():
+    """
+    Retrieves all cryptographic sessions form the vault for the Dashboard.
+    """
+    try:
+        records = db.get_all_session()
+
+        # Convert the SQLite tuples into our Pydantic dictionaries.
+        formatted_records = [
+            {"id": row[0], "root_hash": row[1], "timestamp": str(row[2])}
+            for row in records
+        ]
+
+        return formatted_records
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database Read Error: {str(e)}")
