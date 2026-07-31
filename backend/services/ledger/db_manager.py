@@ -24,7 +24,7 @@ class LedgerDatabase:
                 CREATE TABLE IF NOT EXISTS root_hashes (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     root_hash TEXT NOT NULL UNIQUE,
-                    timestamp DATETIME DEAFULT CURRENT_TIMESTAMP
+                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
                 )
             """)
 
