@@ -10,26 +10,43 @@ SAMDAS treats an AI's internal reasoning ("Chain of Thought") as a highly sensit
 ## Core Features
 1. **Real-Time Intercept:** SAMDAS pauses edge-agent execution, forcing the AI to generate a step-by-step reasoning trace.
 2. **Immutable Ledger (The Vault):** Every thought is hashed using SHA-256 and appended to a Merkle Tree. The root hash acts as the ultimate, unalterable fingerprint of the AI's cognitive session.
-3. **The Auditor Brain (Coming Soon):** An isolated secondary AI model that reads the locked logs and checks for "Semantic Leaps" (lying about intended actions).
+3. **The Auditor Brain:** An isolated secondary AI model that reads the locked logs and checks for "Semantic Leaps" (lying about intended actions).
 4. **Bare-Metal Sandbox (Coming Soon):** If the Auditor approves the cryptographic trail, the action is executed in an isolated Docker container. If deceptive, the connection is instantly severed.
 
 ## Project Architecture
 - **Language:** Python 3.11
-- **API Engine:** FastAPI & WebSockets (Async)
+- **API Engine:** FastAPI (Async)
 - **Database:** SQLite (Transactional Ledger)
-- **Frontend:** Vanilla HTML/JS (Modularized for future Next.js integration)
+- **Frontend:** Vanilla HTML/CSS/JS (Control Plane Dashboard)
 
 ## Current Status
 - [x] Project Scaffolding
 - [x] Cryptographic Merkle Tree Engine
 - [x] SQLite Ledger Database
-- [ ] API Nervous System
-- [ ] Control Plane Dashboard
-- [ ] Inference & Auditor Integrations
+- [x] API Nervous System
+- [x] Control Plane Dashboard
+- [ ] Auditor Engine Integrations (Rule-based PoC / Future MLOps Pipeline)
 
-## How to Setup (For Developers)
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/YOUR_GITHUB_USERNAME/SAMDAS.git
-   cd SAMDAS
+## Directory Structure
+```text
+SAMDAS/
+├── backend/
+│   ├── main.py                          # FastAPI Nervous System
+│   └── services/
+│       ├── auditor/                     
+│       │   └── auditor_engine.py        # Evaluates AI thoughts for malicious intent
+│       ├── inference/                   
+│       │   └── dummy_agent.py           # Simulates an AI generating thoughts
+│       └── ledger/
+│           ├── crypto_ledger.py         # The SHA-256 Merkle Tree Math Engine
+│           └── db_manager.py            # SQLite Vault Manager
+├── frontend/                            # Control Plane Dashboard
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   └── app.js
+│   └── index.html                       
+├── tests/
+│   └── test_ledger.py                   # Local bare-metal tests
+├── README.md                            # Project documentation
+└── requirements.txt                     # Python dependencies
