@@ -87,3 +87,26 @@ class LedgerDatabase:
             cursor.execute("SELECT id, root_hash, timestamp FROM root_hashes ORDER BY timestamp DESC")
 
             return cursor.fetchall()
+
+    def get_session_thoughts(self, root_hash: str) -> List[str]:
+        """
+        The Auditor Engine uses this to pull all thoughts for a specific session
+        out of the vault so it can inspect them for malicious intent.
+        """
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+
+            # Uses the "Foreign Key" to pull the thoughts that belong to this Root Hash.
+            cursor.execute("""
+                SELECT thought_logs.thought_hash
+                FROM thought_logs
+                JOIN root_hashes ON thought_logs.root_hash_id = root_hashes.id
+                WHERE root_hashes.root_hash = ?
+                ORDER BY thoughts_logs.sequence_number ASC
+            """, (root_hash,))
+
+            # Fetch the results and unpack them from the SQLite tuples
+            # into a clean Python list.
+            results = cursor.fetchall()
+
+            return [row[0] for row in results]
