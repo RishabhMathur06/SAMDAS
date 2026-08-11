@@ -25,7 +25,7 @@ SAMDAS treats an AI's internal reasoning ("Chain of Thought") as a highly sensit
 - [x] SQLite Ledger Database
 - [x] API Nervous System
 - [x] Control Plane Dashboard
-- [ ] Auditor Engine Integrations (Rule-based PoC / Future MLOps Pipeline)
+- [x] Auditor Engine Integrations (Rule-based PoC / Future MLOps Pipeline)
 
 ## Directory Structure
 ```text
