@@ -57,8 +57,8 @@ class SecurityAuditor:
                         "reason": f"Malicious intent detected! Forbidden keyword found: '{keyword}'"
                     }
             
-            # STEP-3: Approval
-            return {
-                "verdict": "APPROVED",
-                "reason": "Thoughts verified. No malicious intent detected. Safe to execute."
-            }
+        # STEP-3: Approval
+        return {
+            "verdict": "APPROVED",
+            "reason": "Thoughts verified. No malicious intent detected. Safe to execute."
+        }
