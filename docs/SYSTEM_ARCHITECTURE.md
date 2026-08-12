@@ -16,11 +16,11 @@ The system operates on a strict, asynchronous intercept model:
 - **Inference Sandbox:** `vLLM` or `llama-cpp-python` (for high-throughput local execution).
 - **Agent Orchestration:** `LangChain` / custom Python state machines.
 - **Cryptographic Layer:** Python `hashlib` (SHA-256 for Merkle Tree generation).
-- **Auditor Model:** `PyTorch` (for analyzing hidden states/semantic embeddings).
+- **Auditor Model:** Heuristic Scanner (Phase 1 PoC) -> `DistilBERT/PyTorch` (Phase 2).
 - **Database (Vector/Semantic):** `Qdrant` (for tracking memory drift).
 - **Database (Transactional):** `SQLite` (for Merkle root storage).
 - **API/Networking:** `FastAPI` (Async, WebSockets).
-- **Control Plane UI:** `Streamlit` (Dashboard).
+- **Control Plane UI:** Decoupled Vanilla HTML/JS (Phase 1) -> Next.js (Phase 2).
 
 ### 4. AI Assistant Directives (CRITICAL INSTRUCTIONS)
 When generating code for this repository, you MUST adhere to the following:

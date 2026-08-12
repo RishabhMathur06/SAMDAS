@@ -40,7 +40,7 @@ When the system is fully built, every interaction will follow this exact lifecyc
 
 #### C. The Auditor Brain (`auditor_engine.py` & `memory_vector.py`)
 - **Role:** The independent lie-detector and mutation tracker.
-- **Tech:** `PyTorch`, `Qdrant` (or `ChromaDB`), Hugging Face `transformers`.
+- **Tech:** Rule-based Heuristic Scanner (Current PoC). Evolving to `PyTorch`, `Qdrant` (or `ChromaDB`), Hugging Face `transformers` (Phase 2).
 - **Requirements:**
   - Embeds the Edge Agent's reasoning into high-dimensional vectors and stores them in Qdrant.
   - Calculates the cosine distance between the AI's current reasoning and its baseline factory alignment.
@@ -51,9 +51,9 @@ When the system is fully built, every interaction will follow this exact lifecyc
 - **Tech:** `FastAPI`, `WebSockets`.
 - **Requirements:** Must handle concurrent requests and stream tokens, Merkle hashes, and Auditor trust scores in real-time to the frontend.
 
-#### E. The Control Plane (`dashboard_ui.py`)
+#### E. The Control Plane (`frontend/index.html`)
 - **Role:** The human oversight interface.
-- **Tech:** `Streamlit` or `Gradio`.
+- **Tech:** Decoupled Vanilla HTML/JS (Current). Evolving to Next.js/WebSockets.
 - **Requirements:** - Visualizes the live token stream.
   - Displays the active construction of the Merkle Tree hashes.
   - Renders a live "Trust Gauge" from the Auditor model.
