@@ -15,6 +15,7 @@ SAMDAS treats an AI's internal reasoning ("Chain of Thought") as a highly sensit
 
 ## Project Architecture
 - **Language:** Python 3.11
+- **Inference Engine:** LangChain + Ollama (`qwen3.5`) for 100% localized, air-gapped AI reasoning.
 - **API Engine:** FastAPI (Async)
 - **Database:** SQLite (Transactional Ledger)
 - **Frontend:** Vanilla HTML/CSS/JS (Control Plane Dashboard)
@@ -26,6 +27,7 @@ SAMDAS treats an AI's internal reasoning ("Chain of Thought") as a highly sensit
 - [x] API Nervous System
 - [x] Control Plane Dashboard
 - [x] Auditor Engine Integrations (Rule-based PoC / Future MLOps Pipeline)
+- [x] Live AI Agent Integration (LangChain + Local Ollama LLMs)
 
 ## Directory Structure
 ```text
@@ -36,7 +38,8 @@ SAMDAS/
 │       ├── auditor/                     
 │       │   └── auditor_engine.py        # Evaluates AI thoughts for malicious intent
 │       ├── inference/                   
-│       │   └── dummy_agent.py           # Simulates an AI generating thoughts
+│       │   ├── dummy_agent.py           # Hardcoded simulation script
+│       │   └── live_agent.py            # LangChain/Ollama autonomous agent
 │       └── ledger/
 │           ├── crypto_ledger.py         # The SHA-256 Merkle Tree Math Engine
 │           └── db_manager.py            # SQLite Vault Manager
@@ -50,3 +53,42 @@ SAMDAS/
 │   └── test_ledger.py                   # Local bare-metal tests
 ├── README.md                            # Project documentation
 └── requirements.txt                     # Python dependencies
+```
+
+## How to Setup (For Developers)
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/YOUR_GITHUB_USERNAME/SAMDAS.git
+   cd SAMDAS
+   ```
+
+2. **Setup the Virtual Environment:**
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
+   ```
+
+3. **Install and Pull Local LLM:**
+   Make sure you have [Ollama](https://ollama.com/) installed, then run:
+   ```bash
+   ollama pull qwen3.5
+   ```
+
+4. **Start the API Server:**
+   ```bash
+   uvicorn backend.main:app --reload
+   ```
+
+5. **Launch the Dashboard:**
+   Open a new terminal and run:
+   ```bash
+   open frontend/index.html
+   ```
+
+6. **Trigger the Autonomous Agent:**
+   In another terminal, run:
+   ```bash
+   python backend/services/inference/live_agent.py
+   ```
