@@ -37,7 +37,7 @@ class SecurityAuditor:
         self.malicious_vectors = self.model.encode(self.malicious_concepts)
 
         # Threshold for cosine distance.
-        self.drift_threshold = 0.5
+        self.drift_threshold = 0.8
 
     def evaluate_session(self, raw_thoughts: List[str], claimed_root_hash: str) -> Dict[str, str]:
         """
