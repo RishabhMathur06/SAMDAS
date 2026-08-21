@@ -10,15 +10,17 @@ SAMDAS treats an AI's internal reasoning ("Chain of Thought") as a highly sensit
 ## Core Features
 1. **Real-Time Intercept:** SAMDAS pauses edge-agent execution, forcing the AI to generate a step-by-step reasoning trace.
 2. **Immutable Ledger (The Vault):** Every thought is hashed using SHA-256 and appended to a Merkle Tree. The root hash acts as the ultimate, unalterable fingerprint of the AI's cognitive session.
-3. **The Auditor Brain:** An isolated secondary AI model that reads the locked logs and checks for "Semantic Leaps" (lying about intended actions).
-4. **Bare-Metal Sandbox (Coming Soon):** If the Auditor approves the cryptographic trail, the action is executed in an isolated Docker container. If deceptive, the connection is instantly severed.
+3. **The ML Auditor Brain:** Uses `sentence-transformers` to generate dense vector embeddings of the AI's thoughts. It calculates the Cosine Distance against a baseline of known malicious concepts to mathematically detect semantic drift and deceptive alignment.
+4. **Real-Time WebSocket Dashboard:** A Push-architecture control plane that streams cryptographic verdicts to a web UI in real-time, providing zero-latency alerting for security admins.
+5. **Bare-Metal Sandbox (Coming Soon):** If the Auditor approves the cryptographic trail, the action is executed in an isolated Docker container. If deceptive, the connection is instantly severed.
 
 ## Project Architecture
 - **Language:** Python 3.11
 - **Inference Engine:** LangChain + Ollama (`qwen3.5`) for 100% localized, air-gapped AI reasoning.
-- **API Engine:** FastAPI (Async)
+- **Machine Learning Auditor:** `sentence-transformers` (all-MiniLM-L6-v2) and `scipy` for Cosine Distance vector math.
+- **API Engine:** FastAPI (Async) with `websockets` for live Push architecture.
 - **Database:** SQLite (Transactional Ledger)
-- **Frontend:** Vanilla HTML/CSS/JS (Control Plane Dashboard)
+- **Frontend:** Vanilla HTML/CSS/JS (Real-Time Control Plane Dashboard)
 
 ## Current Status
 - [x] Project Scaffolding
@@ -26,7 +28,8 @@ SAMDAS treats an AI's internal reasoning ("Chain of Thought") as a highly sensit
 - [x] SQLite Ledger Database
 - [x] API Nervous System
 - [x] Control Plane Dashboard
-- [x] Auditor Engine Integrations (Rule-based PoC / Future MLOps Pipeline)
+- [x] Live WebSockets Dashboard Streaming (Push Architecture)
+- [x] Machine Learning Auditor Engine (Vector Semantic Embeddings & Cosine Distance)
 - [x] Live AI Agent Integration (LangChain + Local Ollama LLMs)
 
 ## Directory Structure
