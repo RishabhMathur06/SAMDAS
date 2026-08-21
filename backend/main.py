@@ -1,8 +1,9 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
-
+import json
+import datetime
 from backend.services.ledger.crypto_ledger import MerkleTree
 from backend.services.ledger.db_manager import LedgerDatabase
 from backend.services.auditor.auditor_engine import SecurityAuditor
@@ -26,6 +27,27 @@ db = LedgerDatabase("samdas_ledger.db")
 
 # Intitialize the Auditor Engine.
 auditor = SecurityAuditor("samdas_ledger.db")
+
+# ==========================================
+# WEBSOCKET MANAGER (NEW)
+# ==========================================
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: List[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def broadcast(self, message: dict):
+         """Sends a JSON message to all connected browsers instantly."""
+         for connection in self.active_connections:
+            await connection.send_text(json.dumps(message))
+
+manager = ConnectionManager()
 
 # ==========================================
 # PYDANTIC MODELS (Data Validation)
@@ -55,7 +77,19 @@ class SessionRecord(BaseModel):
 async def health_check():
     """A simple ping to check if the Firewall is online."""
     return {"status": "online", "system": "SAMDAS Firewall Active"}
-    
+
+@app.websocket("/ws/dashboard")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+
+    try:
+        while True:
+            # Keeps the connection alive waiting for broadcasts.
+            data = await websocket.receive_text()
+
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+
 @app.post("/api/v1/ledger/session", response_model=SessionResponse)
 async def secure_thought_session(session: ThoughtSession):
     """
@@ -86,6 +120,16 @@ async def secure_thought_session(session: ThoughtSession):
     
     # 5. Runs the auditor engine.
     audit_result = auditor.evaluate_session(session.thoughts, root_hash)
+
+    # Broadcasts the live result to all connected web browsers.
+    total_sessions = len(db.get_all_session())
+
+    await manager.broadcast({
+        "id": total_sessions,
+        "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "root_hash": root_hash,
+        "verdict": audit_result["verdict"]
+    })
 
     # 6. Returns full verdict to the caller.
     return SessionResponse(
