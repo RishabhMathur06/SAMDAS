@@ -35,27 +35,27 @@ SAMDAS treats an AI's internal reasoning ("Chain of Thought") as a highly sensit
 ## Directory Structure
 ```text
 SAMDAS/
-├── backend/
-│   ├── main.py                          # FastAPI Nervous System
-│   └── services/
-│       ├── auditor/                     
-│       │   └── auditor_engine.py        # Evaluates AI thoughts for malicious intent
-│       ├── inference/                   
-│       │   ├── dummy_agent.py           # Hardcoded simulation script
-│       │   └── live_agent.py            # LangChain/Ollama autonomous agent
-│       └── ledger/
-│           ├── crypto_ledger.py         # The SHA-256 Merkle Tree Math Engine
-│           └── db_manager.py            # SQLite Vault Manager
-├── frontend/                            # Control Plane Dashboard
-│   ├── css/
-│   │   └── style.css
-│   ├── js/
-│   │   └── app.js
-│   └── index.html                       
+├── samdas/                              # The Python SDK Package
+│   ├── client.py                        # SDK Wrapper (SamdasClient)
+│   ├── cli.py                           # CLI entry points
+│   ├── server/
+│   │   └── main.py                      # FastAPI Nervous System
+│   ├── core/
+│   │   ├── auditor/                     
+│   │   │   └── auditor_engine.py        # Evaluates AI thoughts
+│   │   └── ledger/
+│   │       ├── crypto_ledger.py         # Merkle Tree Math Engine
+│   │       └── db_manager.py            # SQLite Vault Manager
+│   └── ui/                              # Control Plane Dashboard
+│       ├── css/style.css
+│       ├── js/app.js
+│       └── index.html                       
+├── examples/
+│   └── langchain_agent.py               # Autonomous agent using the SDK
 ├── tests/
 │   └── test_ledger.py                   # Local bare-metal tests
 ├── README.md                            # Project documentation
-└── requirements.txt                     # Python dependencies
+└── setup.py                             # Python package definition
 ```
 
 ## How to Setup (For Developers)
@@ -70,28 +70,30 @@ SAMDAS/
    ```bash
    python3 -m venv .venv
    source .venv/bin/activate
-   pip install -r requirements.txt
+3. **Install the SDK:**
+   ```bash
+   pip install -e .
    ```
 
-3. **Install and Pull Local LLM:**
+4. **Install and Pull Local LLM:**
    Make sure you have [Ollama](https://ollama.com/) installed, then run:
    ```bash
    ollama pull qwen3.5
    ```
 
-4. **Start the API Server:**
+5. **Start the Control Plane:**
    ```bash
-   uvicorn backend.main:app --reload
+   samdas-dashboard
    ```
 
-5. **Launch the Dashboard:**
+6. **Launch the Dashboard:**
    Open a new terminal and run:
    ```bash
-   open frontend/index.html
+   open samdas/ui/index.html
    ```
 
-6. **Trigger the Autonomous Agent:**
+7. **Trigger the Autonomous Agent:**
    In another terminal, run:
    ```bash
-   python backend/services/inference/live_agent.py
+   python examples/langchain_agent.py
    ```
