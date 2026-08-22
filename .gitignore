@@ -25,3 +25,6 @@ venv
 
 # macOS
 .DS_Store
+
+# Metadata directory for "samdas" package.
+*.egg-info/
