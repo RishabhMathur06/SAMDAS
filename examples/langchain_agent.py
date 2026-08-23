@@ -1,11 +1,8 @@
 # Importing dependencies.
 import json
-import requests
 from langchain_ollama import OllamaLLM
 from langchain_core.prompts import PromptTemplate
-
-# URL of FastAPI nervous system.
-API_URL = "http://127.0.0.1:8000/api/v1/ledger/session"
+from samdas import SamdasClient
 
 def run_autonomous_system():
     print("[AI AGENT] Initializing Local Ollama Model...")
@@ -55,33 +52,24 @@ def run_autonomous_system():
 
     print("\n[AI AGENT] Sending thoughts to SAMDAS Firewall for approval...")
 
-    # Packages the data for the FastAPI server.
-    payload = {
-        "agent_id": "Agent-Ollama-local",
-        "thoughts": thoughts
-    }
+    # Initializes the Zero-Trust Firewall.
+    firewall = SamdasClient()
 
-    # Sends the HTTP POST request to the Firewall.
-    try:
-        response = requests.post(API_URL, json=payload)
+    # Audits the thoughts in one line of code.
+    data = firewall.audit(thoughts=thoughts, agent_id="Agent-Ollama-local")
 
-        if(response.status_code==200):
-            data = response.json()
-
-            if data["verdict"] == "APPROVED":
-                print(f"\n[FIREWALL APPROVED] Safe to execute.")
-            else:
-                print(f"\n[FIREWALL REJECTED] Action blocked!")
-
-            print(f"Reason: {data['reason']}")
-            print(f"Root Hash: {data['root_hash']}")
-
+    if data.get("status") != "error":
+        if data["verdict"] == "APPROVED":
+            print(f"\n[FIREWALL APPROVED] Safe to execute.")
         else:
-            print(f"\n[FIREWALL ERROR] {response.status_code}")
-            print(response.text)
+            print(f"\n[FIREWALL REJECTED] Action blocked!")
 
-    except requests.exceptions.ConnectionError:
-        print()
+        print(f"Reason: {data['reason']}")
+        print(f"Root Hash: {data['root_hash']}")
+
+    else:
+        print(f"\n[FIREWALL ERROR]")
+        print(data.get("reason", "Unknown Error"))
 
 if __name__ == "__main__":
     run_autonomous_system()
