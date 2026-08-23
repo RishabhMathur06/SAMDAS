@@ -3,8 +3,8 @@ from typing import List, Dict
 import numpy as np
 from scipy.spatial.distance import cosine
 from sentence_transformers import SentenceTransformer
-from backend.services.ledger.crypto_ledger import MerkleTree
-from backend.services.ledger.db_manager import LedgerDatabase
+from samdas.core.ledger.crypto_ledger import MerkleTree
+from samdas.core.ledger.db_manager import LedgerDatabase
 
 class SecurityAuditor:
     """
