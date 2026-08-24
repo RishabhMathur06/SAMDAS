@@ -12,7 +12,8 @@ SAMDAS treats an AI's internal reasoning ("Chain of Thought") as a highly sensit
 2. **Immutable Ledger (The Vault):** Every thought is hashed using SHA-256 and appended to a Merkle Tree. The root hash acts as the ultimate, unalterable fingerprint of the AI's cognitive session.
 3. **The ML Auditor Brain:** Uses `sentence-transformers` to generate dense vector embeddings of the AI's thoughts. It calculates the Cosine Distance against a baseline of known malicious concepts to mathematically detect semantic drift and deceptive alignment.
 4. **Real-Time WebSocket Dashboard:** A Push-architecture control plane that streams cryptographic verdicts to a web UI in real-time, providing zero-latency alerting for security admins.
-5. **Bare-Metal Sandbox (Coming Soon):** If the Auditor approves the cryptographic trail, the action is executed in an isolated Docker container. If deceptive, the connection is instantly severed.
+5. **Operational Enterprise Logging:** Built-in logging that secretly streams structured JSON lines (`.jsonl`) to a background file for Splunk/Datadog integration, while maintaining a clean developer console.
+6. **Bare-Metal Sandbox (Coming Soon):** If the Auditor approves the cryptographic trail, the action is executed in an isolated Docker container. If deceptive, the connection is instantly severed.
 
 ## Project Architecture
 - **Language:** Python 3.11
@@ -31,6 +32,7 @@ SAMDAS treats an AI's internal reasoning ("Chain of Thought") as a highly sensit
 - [x] Live WebSockets Dashboard Streaming (Push Architecture)
 - [x] Machine Learning Auditor Engine (Vector Semantic Embeddings & Cosine Distance)
 - [x] Live AI Agent Integration (LangChain + Local Ollama LLMs)
+- [x] Operational Logging Module (JSONL Enterprise formatting)
 
 ## Directory Structure
 ```text
@@ -43,6 +45,8 @@ SAMDAS/
 │   ├── core/
 │   │   ├── auditor/                     
 │   │   │   └── auditor_engine.py        # Evaluates AI thoughts
+│   │   ├── logger/
+│   │   │   └── logger.py                # Operational JSON logger
 │   │   └── ledger/
 │   │       ├── crypto_ledger.py         # Merkle Tree Math Engine
 │   │       └── db_manager.py            # SQLite Vault Manager
