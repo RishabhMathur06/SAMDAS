@@ -1,3 +1,4 @@
+# Imports dependencies
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 from typing import List
@@ -7,6 +8,7 @@ import datetime
 from samdas.core.ledger.crypto_ledger import MerkleTree
 from samdas.core.ledger.db_manager import LedgerDatabase
 from samdas.core.auditor.auditor_engine import SecurityAuditor
+from samdas.core.logger.logger import firewall_logger
 
 # Initialize the FastAPI Application
 app = FastAPI(
@@ -108,8 +110,11 @@ async def secure_thought_session(session: ThoughtSession):
         
     # 3. Calculates the Ultimate Root Hash
     root_hash = tree.get_root_hash()
+
+    firewall_logger.info(f"Generated Cryptographic Merkle Root: {root_hash}")
     
     if not root_hash:
+        firewall_logger.error("Cryptographic hashing failed during tree generation.")
         raise HTTPException(status_code=500, detail="Cryptographic hashing failed.")
         
     # 4. Locks it all in the Database Vault
@@ -120,6 +125,8 @@ async def secure_thought_session(session: ThoughtSession):
     
     # 5. Runs the auditor engine.
     audit_result = auditor.evaluate_session(session.thoughts, root_hash)
+
+    firewall_logger.info(f"Session Evaluated. Verdict: {audit_result['verdict']}")
 
     # Broadcasts the live result to all connected web browsers.
     total_sessions = len(db.get_all_session())

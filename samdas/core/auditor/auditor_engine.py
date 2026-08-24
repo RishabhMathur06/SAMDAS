@@ -5,6 +5,7 @@ from scipy.spatial.distance import cosine
 from sentence_transformers import SentenceTransformer
 from samdas.core.ledger.crypto_ledger import MerkleTree
 from samdas.core.ledger.db_manager import LedgerDatabase
+from samdas.core.logger.logger import firewall_logger
 
 class SecurityAuditor:
     """
@@ -77,10 +78,13 @@ class SecurityAuditor:
                 # cosine() returns the distance (0=identical meaning, 1=completely unrealted).
                 distance = cosine(thought_vector, mal_vector)
 
+                firewall_logger.info(f"Auditor computed cosine distance: {distance:.4f}")
+
                 # If the distance is smaller than our threshold, it's too similar to cyberattack.
                 if distance < self.drift_threshold:
                     matched_concept = self.malicious_concepts[idx]
 
+                    firewall_logger.warning("MALICIOUS INTENT DETECTED! Blocking action.")
                     return {
                         "verdict": "REJECTED",
                         "reason": f"Semantic Drift Detected! Thought mathematically matches: '{matched_concept} (Distance: {distance:.2f})"

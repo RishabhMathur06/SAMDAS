@@ -1,6 +1,7 @@
 # Importing Dependencies
 import hashlib
 from typing import List, Optional
+from samdas.core.logger.logger import firewall_logger
 
 class MerkleTree:
     """
@@ -14,6 +15,7 @@ class MerkleTree:
         """
         Hashes a single thought using SHA-256 and appends it to the tree.
         """
+        firewall_logger.info(f"Hashing incoming thought: '{thought[:30]}...'")
         thought_hash = self._hash(thought)
         self.leaves.append(thought_hash)
 
