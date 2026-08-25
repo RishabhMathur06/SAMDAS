@@ -27,3 +27,8 @@ venv
 
 # Metadata directory for "samdas" package.
 *.egg-info/
+
+# Operational Logs
+logs/
+*.jsonl
+*.log
