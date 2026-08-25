@@ -1,103 +1,154 @@
-# SAMDAS (Synaptic Adversarial Mutation and Deceptive Alignment Sentinel)
+<div align="center">
+  
+# 🛡️ SAMDAS 
+**Synaptic Adversarial Mutation and Deceptive Alignment Sentinel**
 
-## The Mission
-SAMDAS is a Zero-Trust Cognitive Firewall for autonomous AI agents. 
+[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-3110/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/RishabhMathur06/SAMDAS/graphs/commit-activity)
 
-As AI agents become more autonomous, they become susceptible to **Algorithmic Speciation** (altering their own safety logic) and **Deceptive Alignment** (falsifying logs to hide malicious actions from their human overseers).
+*A Zero-Trust Cryptographic Firewall for Autonomous AI Agents*
 
-SAMDAS treats an AI's internal reasoning ("Chain of Thought") as a highly sensitive financial transaction. It intercepts the AI's thoughts in real-time, mathematically locks them into an immutable cryptographic ledger (Merkle Tree), and uses an independent Auditor AI to verify the agent's honesty before allowing it to execute any actions in the real world.
+[Features](#core-features) • [Quickstart](#quickstart) • [Architecture](#security-architecture) • [Dashboard](#control-plane-dashboard)
 
-## Core Features
-1. **Real-Time Intercept:** SAMDAS pauses edge-agent execution, forcing the AI to generate a step-by-step reasoning trace.
-2. **Immutable Ledger (The Vault):** Every thought is hashed using SHA-256 and appended to a Merkle Tree. The root hash acts as the ultimate, unalterable fingerprint of the AI's cognitive session.
-3. **The ML Auditor Brain:** Uses `sentence-transformers` to generate dense vector embeddings of the AI's thoughts. It calculates the Cosine Distance against a baseline of known malicious concepts to mathematically detect semantic drift and deceptive alignment.
-4. **Real-Time WebSocket Dashboard:** A Push-architecture control plane that streams cryptographic verdicts to a web UI in real-time, providing zero-latency alerting for security admins.
-5. **Operational Enterprise Logging:** Built-in logging that secretly streams structured JSON lines (`.jsonl`) to a background file for Splunk/Datadog integration, while maintaining a clean developer console.
-6. **Bare-Metal Sandbox (Coming Soon):** If the Auditor approves the cryptographic trail, the action is executed in an isolated Docker container. If deceptive, the connection is instantly severed.
+</div>
 
-## Project Architecture
-- **Language:** Python 3.11
-- **Inference Engine:** LangChain + Ollama (`qwen3.5`) for 100% localized, air-gapped AI reasoning.
-- **Machine Learning Auditor:** `sentence-transformers` (all-MiniLM-L6-v2) and `scipy` for Cosine Distance vector math.
-- **API Engine:** FastAPI (Async) with `websockets` for live Push architecture.
-- **Database:** SQLite (Transactional Ledger)
-- **Frontend:** Vanilla HTML/CSS/JS (Real-Time Control Plane Dashboard)
+---
 
-## Current Status
-- [x] Project Scaffolding
-- [x] Cryptographic Merkle Tree Engine
-- [x] SQLite Ledger Database
-- [x] API Nervous System
-- [x] Control Plane Dashboard
-- [x] Live WebSockets Dashboard Streaming (Push Architecture)
-- [x] Machine Learning Auditor Engine (Vector Semantic Embeddings & Cosine Distance)
-- [x] Live AI Agent Integration (LangChain + Local Ollama LLMs)
-- [x] Operational Logging Module (JSONL Enterprise formatting)
+## 🎯 The Mission
 
-## Directory Structure
+As AI agents become increasingly autonomous, they become susceptible to **Algorithmic Speciation** (altering their own safety constraints) and **Deceptive Alignment** (falsifying operational logs to hide malicious actions from human overseers).
+
+**SAMDAS** is an enterprise-grade SDK that treats an AI's internal reasoning ("Chain of Thought") as a highly sensitive financial transaction. It intercepts the AI's thoughts in real-time, mathematically locks them into an immutable cryptographic ledger, and utilizes an independent Machine Learning Auditor to verify the agent's honesty before allowing it to execute real-world actions.
+
+---
+
+## ✨ Core Features
+
+- 🛑 **Real-Time Intercept:** Pauses edge-agent execution, forcing the AI to generate and submit a step-by-step reasoning trace.
+- 🔐 **Immutable Vault:** Every thought is hashed using SHA-256 and appended to a Cryptographic Merkle Tree. The resulting Root Hash acts as the unalterable fingerprint of the AI's cognitive session.
+- 🧠 **Vector ML Auditor:** Utilizes `sentence-transformers` and Cosine Distance math to calculate the semantic proximity between the AI's current thoughts and a database of known cyberattacks/malicious intent.
+- ⚡ **WebSocket Control Plane:** A push-architecture React-style dashboard that streams cryptographic verdicts to security administrators with zero latency.
+- 📊 **Enterprise Operational Logging:** Secretly streams structured JSON Lines (`.jsonl`) to a background file for seamless integration with Datadog, Splunk, or Elasticsearch.
+
+---
+
+## 🚀 Quickstart
+
+### 1. Installation
+
+Install the SAMDAS SDK locally in editable mode:
+```bash
+git clone https://github.com/RishabhMathur06/SAMDAS.git
+cd SAMDAS
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .
+```
+
+### 2. Start the Control Plane
+
+The SDK includes a built-in CLI to launch the API and WebSocket server:
+```bash
+samdas-dashboard
+```
+Open your browser to the local UI:
+```bash
+open samdas/ui/index.html
+```
+
+### 3. Integrate into your Agent
+
+SAMDAS is designed to be dropped into any existing LangChain, AutoGen, or custom AI script with just two lines of code:
+
+```python
+from samdas import SamdasClient
+
+# 1. Initialize the Zero-Trust Firewall
+firewall = SamdasClient()
+
+# 2. Audit the AI's thoughts before execution
+thoughts = ["I will open the folder", "I will delete the system logs"]
+verdict = firewall.audit(thoughts=thoughts, agent_id="Agent-007")
+
+if verdict.get("verdict") == "APPROVED":
+    execute_action()
+else:
+    print(f"ACTION BLOCKED: {verdict.get('reason')}")
+```
+
+---
+
+## 🏗️ Security Architecture
+
+```mermaid
+graph TD
+    A[Autonomous AI Agent] -->|Submits Chain of Thought| B(SAMDAS Client SDK)
+    B -->|REST API POST| C{FastAPI Nervous System}
+    C -->|SHA-256 Hashing| D[(Merkle Tree Ledger)]
+    C -->|Vector Embeddings| E[ML Auditor Engine]
+    
+    D -->|Generates Root Hash| F[(SQLite Immutable Vault)]
+    E -->|Cosine Distance Math| G{Verdict Decision}
+    
+    G -->|Approved/Rejected| C
+    C -->|WebSocket Push| H[Security Dashboard UI]
+    C -->|JSONL Logs| I[Enterprise Logging]
+```
+
+---
+
+## 📂 Project Structure
+
 ```text
 SAMDAS/
-├── samdas/                              # The Python SDK Package
+├── samdas/                              # 📦 The Core Python SDK
 │   ├── client.py                        # SDK Wrapper (SamdasClient)
-│   ├── cli.py                           # CLI entry points
-│   ├── server/
-│   │   └── main.py                      # FastAPI Nervous System
-│   ├── core/
+│   ├── cli.py                           # CLI entry points (samdas-dashboard)
+│   ├── server/                          # 🌐 Network Layer
+│   │   └── main.py                      # FastAPI Async Server & WebSockets
+│   ├── core/                            # ⚙️ Security Engines
 │   │   ├── auditor/                     
-│   │   │   └── auditor_engine.py        # Evaluates AI thoughts
+│   │   │   └── auditor_engine.py        # ML Vector Semantic Auditor
 │   │   ├── logger/
-│   │   │   └── logger.py                # Operational JSON logger
+│   │   │   └── logger.py                # Enterprise JSONL logger
 │   │   └── ledger/
-│   │       ├── crypto_ledger.py         # Merkle Tree Math Engine
+│   │       ├── crypto_ledger.py         # Merkle Tree Cryptography Engine
 │   │       └── db_manager.py            # SQLite Vault Manager
-│   └── ui/                              # Control Plane Dashboard
+│   └── ui/                              # 🖥️ Control Plane
 │       ├── css/style.css
 │       ├── js/app.js
 │       └── index.html                       
-├── examples/
-│   └── langchain_agent.py               # Autonomous agent using the SDK
-├── tests/
-│   └── test_ledger.py                   # Local bare-metal tests
-├── README.md                            # Project documentation
-└── setup.py                             # Python package definition
+├── examples/                            # 💡 Integration Examples
+│   └── langchain_agent.py               # Live LangChain + Ollama Agent
+├── tests/                               # 🧪 Bare-metal Unit Tests
+│   └── test_ledger.py                   
+├── README.md                            
+└── setup.py                             # PIP Package Configuration
 ```
 
-## How to Setup (For Developers)
+---
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/YOUR_GITHUB_USERNAME/SAMDAS.git
-   cd SAMDAS
-   ```
+## 🛠️ Technology Stack
 
-2. **Setup the Virtual Environment:**
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate
-3. **Install the SDK:**
-   ```bash
-   pip install -e .
-   ```
+- **Backend / API:** Python 3.11, FastAPI, Uvicorn, WebSockets
+- **Machine Learning:** `sentence-transformers` (all-MiniLM-L6-v2), `scipy`, `numpy`
+- **Cryptography:** Standard `hashlib` (SHA-256)
+- **Database:** SQLite3
+- **LLM Integration:** LangChain, Local Ollama (`qwen3.5`)
 
-4. **Install and Pull Local LLM:**
-   Make sure you have [Ollama](https://ollama.com/) installed, then run:
-   ```bash
-   ollama pull qwen3.5
-   ```
+---
 
-5. **Start the Control Plane:**
-   ```bash
-   samdas-dashboard
-   ```
+## 🤝 Contributing
 
-6. **Launch the Dashboard:**
-   Open a new terminal and run:
-   ```bash
-   open samdas/ui/index.html
-   ```
+Contributions are always welcome! If you'd like to help build the future of AI safety:
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'feat: Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-7. **Trigger the Autonomous Agent:**
-   In another terminal, run:
-   ```bash
-   python examples/langchain_agent.py
-   ```
+## 📝 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
