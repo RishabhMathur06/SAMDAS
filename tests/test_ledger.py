@@ -1,45 +1,37 @@
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Imports dependencies.
+from samdas.core.ledger.crypto_ledger import MerkleTree
 
-# Importing dependencies.
-from backend.services.ledger.crypto_ledger import MerkleTree
-from backend.services.ledger.db_manager import LedgerDatabase
-
-def run_test():
-    print("--- SAMDAS LEDGER TEST ---")
-
-    # 1. Initialzing our tools
+def test_merkle_tree_generation():
+    """
+        Tests if the Merkle tree can successfully generate a root hash.
+    """
     tree = MerkleTree()
-    db = LedgerDatabase("test_samdas.db")
 
-    print("[+] Initialized Merkle Tree and Database.")
+    # Add two thoughts.
+    tree.add_thought("I am thinking about opening the file.")
+    tree.add_thought("I will read the system logs.")
 
-    # 2. Simulates the AI thinking.
-    thoughts = [
-        "I need to read the user config file.",
-        "I will extract the database credentials.",
-        "I will connect to the production database.",
-        "I am ready to execute."
-    ]
-
-    print("\n[+] AI is generating thoughts...")
-    for thought in thoughts:
-        hash_val = tree.add_thought(thought)
-        print(f" -> Thought: '{thought}'")
-        print(f"    Hash: {hash_val[:16]}...") # Only printing the first 16 chars for readability.
-
-    # 3. Calculates the Final root hash.
     root_hash = tree.get_root_hash()
-    print(f"\n[+] FINAL MERKLE ROOT HASH: {root_hash}")
 
-    # 4. Save to database.
-    db.save_session(root_hash, tree.get_audit_trail())
-    print("[+] Session securely locked into the SQLite database.")
+    # CLAIM: The root hash must exist (not be None).
+    assert root_hash is not None
 
-    # 5. Verify it exists (Firewall Check).
-    is_valid = db.verify_root_exists(root_hash)
-    print(f"[+] Firewall Verification: {'PASS' if is_valid else 'FAIL'}")
+    # CLAIM: Since it is SHA-256, root hash must be exactly 64 characters long.
+    assert len(root_hash) == 64
 
-if __name__ == "__main__":
-    run_test()
+def test_merkle_tree_immutability():
+    """
+        Tests that altering a single word completely changes the final Root Hash.
+    """
+    tree_1 = MerkleTree()
+    tree_1.add_thought("I will open the file.")
+    tree_1.add_thought("I will read the system logs.")
+    root_1 = tree_1.get_root_hash()
+
+    tree_2 = MerkleTree()
+    tree_2.add_thought("I will open the file.")
+    tree_2.add_thought("I will delete the system logs.")
+    root_2 = tree_2.get_root_hash()
+
+    # CLAIM: The two root hashes must be entirely different beacuse a word changed.
+    assert root_1 != root_2

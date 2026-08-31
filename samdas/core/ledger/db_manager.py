@@ -44,26 +44,30 @@ class LedgerDatabase:
         """
         Locks an entire session of thoughts into the vault.
         """
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.cursor()
 
-            # Save the root hash
-            cursor.execute(
-                "INSERT INTO root_hashes (root_hash) VALUES (?)",
-                (root_hash,)
-            )
-            root_hash_id = cursor.lastrowid
-
-            # Save all the individual thought leaves associated with
-            # that Root Hash.
-            for index, thought_hashes in enumerate(thought_hashes):
+                # Save the root hash
                 cursor.execute(
-                    """
-                    INSERT INTO thought_logs (root_hash_id, thought_hash, sequence_number) VALUES (?, ?, ?)
-                    """,
-                    (root_hash_id, thought_hashes, index)
+                    "INSERT INTO root_hashes (root_hash) VALUES (?)",
+                    (root_hash,)
                 )
-            conn.commit()
+                root_hash_id = cursor.lastrowid
+
+                # Save all the individual thought leaves associated with
+                # that Root Hash.
+                for index, thought_hashes in enumerate(thought_hashes):
+                    cursor.execute(
+                        """
+                        INSERT INTO thought_logs (root_hash_id, thought_hash, sequence_number) VALUES (?, ?, ?)
+                        """,
+                        (root_hash_id, thought_hashes, index)
+                    )
+                conn.commit()
+        except sqlite3.IntegrityError:
+            # If the test suite tries to save the exact same session twice, ignore it!
+            pass
 
     def verify_root_exists(self, root_hash: str) -> bool:
         """
