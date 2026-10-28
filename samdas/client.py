@@ -42,11 +42,12 @@ class SamdasClient:
         # Step-1: Check with the Firewall
         audit_result = self.audit(thoughts, agent_id)
 
-        if audit_result.get("verdict") == "REJECTED":
-            print(f"[FIREWALL] Action BLOCKED: {audit_result.get('reason')}")
+        if audit_result.get("verdict") != "APPROVED":
+            reason = audit_result.get("reason", "Action not approved by firewall.")
+            print(f"[FIREWALL] Action BLOCKED: {reason}")
             return {
                 "status": "blocked",
-                "firewall_reason": audit_result.get("reason"),
+                "firewall_reason": reason,
                 "output": None
             }
 
